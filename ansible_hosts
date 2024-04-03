@@ -1,2 +1,2 @@
-3.27.68.177
-3.106.236.26
+3.27.68.177 apache_package=apache2 php_package=libapache2-mod-php
+3.106.236.26 apache_package=httpd php_package=php
