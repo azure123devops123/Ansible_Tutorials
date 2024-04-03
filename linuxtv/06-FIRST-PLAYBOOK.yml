@@ -1,0 +1,8 @@
+# Run Playbook
+ansible-playbook playbooks/02-install-apache.yml --ask-become-pass
+
+# CHECK THE STATUS OF THE SERVICES ON BOTH SERVERS:
+sudo systemctl status apache2
+sudo systemctl status httpd
+
+# Open the port 80 on both servers and check in the web browser the ip addresses of both servers.
