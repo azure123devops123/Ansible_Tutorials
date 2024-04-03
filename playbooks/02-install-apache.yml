@@ -25,7 +25,7 @@
     #   when: ansible_distribution == "Amazon"
 
 
-    # We are defining variables in the ansible_hosts file & calling those variables below. It will make our playbook execution fast.
+    # We are defining variables in the ansible_hosts file & calling those variables below. It will make our playbook execution fast but down side is we are hardcoding values.
     - name: Install apache and php Packages on Amazon and Ubuntu Linux Server
       package: name={{item}} state=latest update_cache=yes
       with_items:
