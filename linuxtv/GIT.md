@@ -11,6 +11,3 @@
 ➜ git branch -M main
 ➜ git remote add origin https://github.com/azure123devops123/Ansible_Tutorials.git
 ➜ git push -u origin main
-
-
-
