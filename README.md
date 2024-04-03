@@ -36,3 +36,4 @@ ansible aws_ec2 -i inventory/01_aws_ec2.yml --private-key=~/aws/aws_keys/jabir-p
 ansible aws_ec2 -m ping
 ansible aws_ec2 -m yum -a 'name=git state=present' --become
 
+

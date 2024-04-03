@@ -14,3 +14,10 @@ ansible all -m ping
 ansible all -m gather_facts
 ansible all -m gather_facts --limit 13.211.56.161               // Against a particular host
 
+ansible all -a "whoami"
+ansible all -a "uname"
+ansible all -a "uname -a"
+ansible all -a "pwd"
+ansible all -a "python3 --version"
+
+
