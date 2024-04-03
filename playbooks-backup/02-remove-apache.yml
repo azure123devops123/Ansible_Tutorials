@@ -18,5 +18,5 @@
       package: name={{item}} state=absent update_cache=yes
       with_items:
         - httpd
+        - php         # php support for apache if required for your project
       when: ansible_distribution == "Amazon"
-      

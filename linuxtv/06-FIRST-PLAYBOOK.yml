@@ -6,3 +6,6 @@ sudo systemctl status apache2
 sudo systemctl status httpd
 
 # Open the port 80 on both servers and check in the web browser the ip addresses of both servers.
+
+# We can check the ansible_distribution in the gather_facts module
+ansible all -m gather_facts | grep ansible_distribution

@@ -13,12 +13,15 @@
         - python3-venv    # virtual environment
         - python3-mysqldb
       when: ansible_distribution == "Ubuntu"  
+      # when: ansible_distribution in ["Ubuntu", "Debian"]
+      # when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04"
 
 
     - name: Install httpd Package on Amazon Linux Server
       package: name={{item}} state=latest update_cache=yes
       with_items:
         - httpd
+        - php             # php support for apache if required for your project
       when: ansible_distribution == "Amazon"  
       
 
