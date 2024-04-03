@@ -1,0 +1,16 @@
+# plugin: aws_ec2
+# region: ap-southeast-2
+# keyed_groups: 
+#   - prefix: arch 
+#     key: 'architecture'
+
+# Minimal example using environment vars or instance role credentials
+# Fetch all hosts in us-east-1, the hostname is the public DNS if it exists, otherwise the private IP address
+plugin: aws_ec2
+regions:
+  - ap-southeast-2
+
+# Filter down particular hosts based of Tags (Env: dev)
+filters:
+  tag:Env:
+    - dev
