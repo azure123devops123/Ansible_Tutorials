@@ -5,10 +5,12 @@
   become: true        # sudo permissions
   pre_tasks:          # These tasks will be run before anything else in the playbook.
     - name: install updates (Amazon Linux)
+      tags: always
       dnf: update_cache=yes update_only=yes
       when: ansible_distribution == "Amazon"
 
     - name: install updates (Ubuntu)
+      tags: always
       apt: update_cache=yes upgrade=dist
       when: ansible_distribution == "Ubuntu"
 
@@ -19,6 +21,7 @@
   become: true
   tasks:
     - name: Install apache2 Package on Ubuntu Server
+      tags: apache,apache2,ubuntu
       apt: name={{item}} state=latest
       with_items:
         - apache2
@@ -32,6 +35,7 @@
       # when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04"
 
     - name: Install httpd Package on Amazon Linux Server
+      tags: apache,httpd,amazon
       dnf: name={{item}} state=latest
       with_items:
         - httpd
@@ -55,10 +59,12 @@
   become: true
   tasks:
     - name: install mariadb package (Amazon)
+      tags: db,mariadb105-server,amazon
       dnf: name=mariadb105-server state=latest
       when: ansible_distribution == "Amazon"
 
     - name: install mariadb package (Ubuntu)
+      tags: db,mariadb-server,ubuntu
       apt: name=mariadb-server state=latest
       when: ansible_distribution == "Ubuntu"
 
@@ -77,6 +83,7 @@
   become: true
   tasks:
     - name: install samba package
+      tags: samba
       package: name=samba state=latest
 
     - name: Ensure samba Started on (Ubuntu Server)

@@ -14,7 +14,7 @@
 
 #################################################################################################
 
-# Targeting Specific Servers: web_servers 
+# Targeting Specific Servers: web_servers
 - hosts: web_servers
   become: true
   tasks:
@@ -60,7 +60,7 @@
 
     - name: install mariadb package (Ubuntu)
       apt: name=mariadb-server state=latest
-      when: ansible_distribution == "Ubuntu"   
+      when: ansible_distribution == "Ubuntu"
 
     - name: Ensure mariadb Started on Ubuntu Server
       service: name=mariadb state=started enabled=yes
@@ -85,4 +85,4 @@
 
     - name: Ensure samba Started on (Amazon Linux Server)
       service: name=smb state=started enabled=yes           # smb is the service name in on Amazon Linux Server
-      when: ansible_distribution == "Amazon"    
+      when: ansible_distribution == "Amazon"
