@@ -1,2 +1,16 @@
-3.27.68.177 apache_package=apache2 php_package=libapache2-mod-php
-3.106.236.26 apache_package=httpd php_package=php
+[dev]
+52.64.225.104
+
+[qa]
+54.252.238.213
+
+[web_servers]
+52.64.225.104
+
+[db_servers]
+54.252.238.213
+
+
+[file_servers]
+52.64.225.104
+54.252.238.213
