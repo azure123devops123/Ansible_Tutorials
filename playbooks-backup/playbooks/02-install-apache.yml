@@ -1,0 +1,47 @@
+---
+- hosts: all
+  become: true    # sudo permissions
+  tasks:          # here we have multiple tasks in this playbook
+
+    - name: Install apache2 Package on Ubuntu Server
+      apt: name={{item}} state=latest update_cache=yes
+      with_items:
+        - apache2
+        - libapache2-mod-php          # php support for apache if required for your project
+        - libapache2-mod-wsgi-py3     # python3 support for apache if required for your project
+        - python3-pip     # pip for Python 3
+        - python3-venv    # virtual environment
+        - python3-mysqldb
+      when: ansible_distribution == "Ubuntu"
+      # when: ansible_distribution in ["Ubuntu", "Debian"]
+      # when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04"
+
+
+    - name: Install httpd Package on Amazon Linux Server
+      dnf: name={{item}} state=latest update_cache=yes
+      with_items:
+        - httpd
+        - php             # php support for apache if required for your project
+      when: ansible_distribution == "Amazon"
+
+
+    # # We are defining variables in the ansible_hosts file & calling those variables below. It will make our playbook execution fast but down side is we are hardcoding values.
+    # 52.64.225.104 apache_package=apache2 php_package=libapache2-mod-php
+    # 54.252.238.213 apache_package=httpd php_package=php
+
+    # - name: Install apache and php Packages on Amazon and Ubuntu Linux Server
+    #   package: name={{item}} state=latest update_cache=yes
+    #   with_items:
+    #     - "{{apache_package}}"
+    #     - "{{php_package}}"             # php support for apache if required for your project
+    #   when: ansible_distribution == "Amazon"
+
+
+    - name: Ensure Apache2 Started on Ubuntu Server
+      service: name=apache2 state=started enabled=yes
+      when: ansible_distribution == "Ubuntu"
+
+
+    - name: Ensure httpd Started on Amazon Linux Server
+      service: name=httpd state=started enabled=yes
+      when: ansible_distribution == "Amazon"

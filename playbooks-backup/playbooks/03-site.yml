@@ -1,0 +1,88 @@
+---
+
+# Targeting All Servers - All servers are going to up to date.
+- hosts: all
+  become: true        # sudo permissions
+  pre_tasks:          # These tasks will be run before anything else in the playbook.
+    - name: install updates (Amazon Linux)
+      dnf: update_cache=yes update_only=yes
+      when: ansible_distribution == "Amazon"
+
+    - name: install updates (Ubuntu)
+      apt: update_cache=yes upgrade=dist
+      when: ansible_distribution == "Ubuntu"
+
+#################################################################################################
+
+# Targeting Specific Servers: web_servers 
+- hosts: web_servers
+  become: true
+  tasks:
+    - name: Install apache2 Package on Ubuntu Server
+      apt: name={{item}} state=latest
+      with_items:
+        - apache2
+        - libapache2-mod-php          # php support for apache if required for your project
+        - libapache2-mod-wsgi-py3     # python3 support for apache if required for your project
+        - python3-pip     # pip for Python 3
+        - python3-venv    # virtual environment
+        - python3-mysqldb
+      when: ansible_distribution == "Ubuntu"
+      # when: ansible_distribution in ["Ubuntu", "Debian"]
+      # when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04"
+
+    - name: Install httpd Package on Amazon Linux Server
+      dnf: name={{item}} state=latest
+      with_items:
+        - httpd
+        - php             # php support for apache if required for your project
+      when: ansible_distribution == "Amazon"
+
+    - name: Ensure Apache2 Started on Ubuntu Server
+      service: name=apache2 state=started enabled=yes
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Ensure httpd Started on Amazon Linux Server
+      service: name=httpd state=started enabled=yes
+      when: ansible_distribution == "Amazon"
+
+#################################################################################################
+
+# Targeting Specific Servers: db_servers - you can verify after login to the database servers.
+  # Check if its installed:   'mariadb --version'
+  # Check if its running and enable: 'systemctl status mariadb'
+- hosts: db_servers
+  become: true
+  tasks:
+    - name: install mariadb package (Amazon)
+      dnf: name=mariadb105-server state=latest
+      when: ansible_distribution == "Amazon"
+
+    - name: install mariadb package (Ubuntu)
+      apt: name=mariadb-server state=latest
+      when: ansible_distribution == "Ubuntu"   
+
+    - name: Ensure mariadb Started on Ubuntu Server
+      service: name=mariadb state=started enabled=yes
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Ensure mariadb Started on Amazon Linux Server
+      service: name=mariadb state=started enabled=yes
+      when: ansible_distribution == "Amazon"
+
+#################################################################################################
+
+# Targeting Specific Servers: file_servers - Note 'samba' package name is same for Ubunu, CentOS and Amazon Servers so we used generic package manager.
+- hosts: file_servers
+  become: true
+  tasks:
+    - name: install samba package
+      package: name=samba state=latest
+
+    - name: Ensure samba Started on (Ubuntu Server)
+      service: name=smbd state=started enabled=yes          # smbd is the service name in on Ubuntu Server
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Ensure samba Started on (Amazon Linux Server)
+      service: name=smb state=started enabled=yes           # smb is the service name in on Amazon Linux Server
+      when: ansible_distribution == "Amazon"    

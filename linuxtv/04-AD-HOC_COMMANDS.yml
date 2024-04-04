@@ -8,7 +8,14 @@ ansible --version
 # ADHOC COMMANDS:
 ansible-inventory -i ansible_hosts --list   OR   ansible-inventory --list
 ansible-inventory -i ansible_hosts --graph  OR   ansible-inventory --graph
-ansible all --list-hosts
+ansible all --list-hosts            # all servers
+ansible dev --list-hosts            # only group of dev servers
+ansible qa --list-hosts             # only group of qa servers
+ansible first_app --list-hosts      # all servers in first_app group
+ansible \!first_app --list-hosts    # \! which are not in first_app group
+ansible groupofgroups --list-hosts  # group of groups
+ansible dev:qa --list-hosts         # grouping dev and qa groups
+ansible subgroup --list-hosts       # subgroup of servers
 
 ansible all -m ping
 ansible all -m gather_facts
@@ -19,5 +26,3 @@ ansible all -a "uname"
 ansible all -a "uname -a"
 ansible all -a "pwd"
 ansible all -a "python3 --version"
-
-
