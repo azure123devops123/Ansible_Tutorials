@@ -42,10 +42,12 @@
       when: ansible_distribution == "Amazon"
 
     - name: Ensure Apache2 Started on Ubuntu Server
+      tags: apache,apache2,ubuntu
       service: name=apache2 state=started enabled=yes
       when: ansible_distribution == "Ubuntu"
 
     - name: Ensure httpd Started on Amazon Linux Server
+      tags: apache,httpd,amazon
       service: name=httpd state=started enabled=yes
       when: ansible_distribution == "Amazon"
 
@@ -77,10 +79,12 @@
       when: ansible_distribution == "Ubuntu"
 
     - name: Ensure mariadb Started on Ubuntu Server
+      tags: apache,apache2,ubuntu
       service: name=mariadb state=started enabled=yes
       when: ansible_distribution == "Ubuntu"
 
     - name: Ensure mariadb Started on Amazon Linux Server
+      tags: apache,httpd,amazon
       service: name=mariadb state=started enabled=yes
       when: ansible_distribution == "Amazon"
 
@@ -95,10 +99,12 @@
       package: name=samba state=latest
 
     - name: Ensure samba Started on (Ubuntu Server)
+      tags: apache,apache2,ubuntu
       service: name=smbd state=started enabled=yes          # smbd is the service name in on Ubuntu Server
       when: ansible_distribution == "Ubuntu"
 
     - name: Ensure samba Started on (Amazon Linux Server)
+      tags: apache,httpd,amazon
       service: name=smb state=started enabled=yes           # smb is the service name in on Amazon Linux Server
       when: ansible_distribution == "Amazon"
 
