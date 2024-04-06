@@ -11,5 +11,6 @@ ls /Users/muhammadjabir/Desktop/my_ansible/Ansible_Tutorials/playbooks
 
 
 # copy the source code to the web servers and check it
-ls /var/www/html/
-
+ls /var/www/html/                   # The contents should be exists in the html directory
+OR
+cat /var/www/html/index.html        # This index.html must exists on all servers

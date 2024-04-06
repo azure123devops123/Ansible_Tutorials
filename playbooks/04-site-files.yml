@@ -1,5 +1,4 @@
 ---
-
 # Targeting All Servers - All servers are going to up to date.
 - hosts: all
   become: true        # sudo permissions
@@ -14,7 +13,7 @@
       apt: update_cache=yes upgrade=dist
       when: ansible_distribution == "Ubuntu"
 
-#################################################################################################
+##################################################################################################
 
 # Targeting Specific Servers: web_servers
 - hosts: web_servers
@@ -51,24 +50,16 @@
       when: ansible_distribution == "Amazon"
 
 
-
     # copy contents - tip -> remote_src=yes if the contents directory exists remotely not locally.
-    - name: copy the source contents to the webserver 
+    - name: copy the source contents to the all webserver
       tags: apache,apache2,httpd
-
-      # ###### copy only a file
-      # copy: src=default_site.html dest=/var/www/html/index.html owner=root group=root mode=0644
-
+      # ###### copy only a file - Due to root owner and group property its good for security purpose because only root can make changes to this file. mode=0644 are the permissions on this file when it get to the destination server.
+      copy: src=default_site.html dest=/var/www/html/index.html owner=root group=root mode=0644
       ###### copy a directory
-      copy: src=demo/app/ dest=/var/www/html owner=root group=root owner=root group=root mode=0755
-      
-      
+      # copy: src=demo/app/ dest=/var/www/html owner=root group=root owner=root group=root mode=0755
 
 
-
-
-
-#################################################################################################
+#####################################################################################################
 
 # Targeting Specific Servers: db_servers - you can verify after login to the database servers.
   # Check if its installed:   'mariadb --version'
@@ -94,7 +85,7 @@
       service: name=mariadb state=started enabled=yes
       when: ansible_distribution == "Amazon"
 
-#################################################################################################
+######################################################################################################################################################
 
 # Targeting Specific Servers: file_servers - Note 'samba' package name is same for Ubunu, CentOS and Amazon Servers so we used generic package manager.
 - hosts: file_servers
