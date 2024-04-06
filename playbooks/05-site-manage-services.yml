@@ -52,6 +52,37 @@
       when: ansible_distribution == "Amazon"
 
 
+
+# # METHOD # 1 - TO MAKE A CHANGE AND RESTART THE SERVICE USING HNDLERS.
+#     # On Amazon Linux - an admin email address change - A config change demonstration by using 'fileinline' module
+#     - name: change email address for the admin in the configration
+#       tags: apache,httpd,amazon
+#       lineinfile: path=/etc/httpd/conf/httpd.conf regexp='^ServerAdmin' line="ServerAdmin azure123.devops123@gmail.com"
+#       when: ansible_distribution == "Amazon"
+#       notify: restart httpd           # notify will let the handlers know
+
+# # handlers will be indentation same like tasks
+#   handlers:
+#     - name: restart httpd
+#       service: name=httpd state=restarted
+
+
+# METHOD # 2 - TO MAKE A CHANGE AND RESTART THE SERVICE USING REGISTER VARIABLE.
+    # On Amazon Linux - an admin email address change - A config change demonstration by using 'fileinline' module
+    - name: change email address for the admin in the configration
+      tags: apache,httpd,amazon
+      lineinfile: path=/etc/httpd/conf/httpd.conf regexp='^ServerAdmin' line="ServerAdmin azure12345.devops12345@gmail.com"
+      when: ansible_distribution == "Amazon"
+      register: httpd          # this variable name can be anything - we are registering the state into a variable called 'httpd'
+
+      # IMPORTANT NOTE:- MAKE SURE THAT THE ABOVE VARIABLE 'httpd' SHOULD BE CHANGE OTHERWISE THE BELOW TASK WILL NOT RUN.
+    - name: restart httpd service on Amazon Linux Server
+      tags: apache,httpd,amazon
+      service: name=httpd state=restarted
+      when: httpd.changed         # if there is a change in the above variable 'httpd' then restart the service 
+
+
+
     # copy contents - tip -> remote_src=yes if the contents directory exists remotely not locally.
     - name: copy the source contents to the all webserver
       tags: apache,apache2,httpd
@@ -126,7 +157,9 @@
     - name: install terraform on control host
       tags: terraform,control,control_host
       unarchive: src=https://releases.hashicorp.com/terraform/1.7.5/terraform_1.7.5_linux_amd64.zip dest=/usr/local/bin owner=root group=root remote_src=yes mode=0755
+      # google the 'terraform download' and copy the above link
 
 # Commands to verify to our control host. 
 # /usr/local/bin/terraform
 # terraform
+
