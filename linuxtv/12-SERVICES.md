@@ -14,3 +14,7 @@
 
 4) Immediately, re-run the playbook to MAKE SURE THERE ARE NO CHANGES THIS TIME because we did not make any changes. Import because when we are working with the config files and using 'fileinline' module if we have any typos or any problem it will duplicate the line. so we have to be careful. its very common problem.
    ansible-playbook playbooks/05-site-manage-services.yml --tags "httpd" --ask-become-pass
+
+# On Ubuntu Server:  
+1) make a change into a config file      '/etc/apache2/sites-available/000-default.conf'
+rest the similar stuff.
