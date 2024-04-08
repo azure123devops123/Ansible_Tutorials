@@ -176,7 +176,7 @@
       tags: always
       package: name={{item}} state=latest 
       with_items:
-        - curl
+        # - curl    # curl is package name only on ubuntu or debian
         - unzip
 
     # install terraform on our control host - download a zip file from internet and extract it locally on our control host.
