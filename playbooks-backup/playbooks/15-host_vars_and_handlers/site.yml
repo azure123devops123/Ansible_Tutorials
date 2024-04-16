@@ -1,0 +1,228 @@
+---
+# Targeting All Servers - All servers are going to up to date.
+- hosts: all
+  become: true        # sudo permissions
+  pre_tasks:          # These tasks will be run before anything else in the playbook.
+    - name: updates repo cache (Amazon Linux)
+      tags: always
+      dnf: update_cache=yes
+      changed_when: false         # NOT A CHANGE NO MATTER WHAT - (WE WILL NOT SEE changed=1 IN THE PLAY RECAP)
+      when: ansible_distribution == "Amazon"
+
+    - name: updates repo cache (Ubuntu)
+      tags: always
+      apt: update_cache=yes
+      changed_when: false         # NOT A CHANGE NO MATTER WHAT - - (WE WILL NOT SEE changed=1 IN THE PLAY RECAP)
+      when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  become: true
+  roles:
+    - base
+
+- hosts: web_servers
+  become: true
+  roles:
+    - web_servers
+
+- hosts: db_servers
+  become: true
+  roles:
+    - db_servers
+
+- hosts: file_servers
+  become: true
+  roles:
+    - file_servers
+
+- hosts: control_host
+  become: true
+  roles:
+    - control_host           
+
+
+
+
+
+
+#     # THIS IS FOR LATER USE IF WE WANT SSH KEY MANAGEMENT LATER ON - ITS JUST A PLACE HOLDER
+#     # Copy the ssh public key to all the servers
+#     - name: Copy the ssh public key to all the servers
+#       tags: always
+#       authorized_key: user=simone key="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIItAUg8LGKHv+4WKZvCJ/ko4viI0g7l7aFIfWw3UR3Fy ansible"
+
+# #######################################################################################################################################################################
+
+# # Targeting Specific Servers: web_servers
+# - hosts: web_servers
+#   become: true
+#   tasks:
+#     - name: Install apache2 Package on Ubuntu Server
+#       tags: apache,apache2,ubuntu
+#       apt: name={{item}} state=latest
+#       with_items:
+#         - apache2
+#         - libapache2-mod-php          # php support for apache if required for your project
+#         - libapache2-mod-wsgi-py3     # python3 support for apache if required for your project
+#         - python3-pip     # pip for Python 3
+#         - python3-venv    # virtual environment
+#         - python3-mysqldb
+#       when: ansible_distribution == "Ubuntu"
+#       # when: ansible_distribution in ["Ubuntu", "Debian"]
+#       # when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04"
+
+#     - name: Install httpd Package on Amazon Linux Server
+#       tags: apache,httpd,amazon
+#       dnf: name={{item}} state=latest
+#       with_items:
+#         - httpd
+#         - php             # php support for apache if required for your project
+#       when: ansible_distribution == "Amazon"
+
+#     - name: Ensure Apache2 Started on Ubuntu Server
+#       tags: apache,apache2,ubuntu
+#       service: name=apache2 state=started enabled=yes
+#       when: ansible_distribution == "Ubuntu"
+
+#     - name: Ensure httpd Started on Amazon Linux Server
+#       tags: apache,httpd,amazon
+#       service: name=httpd state=started enabled=yes
+#       when: ansible_distribution == "Amazon"
+
+
+# ############################## CONFIG CHANGES AND RESTART SERVICES USING TWO DIFFERENT METHODS FOR BOTH UBUNTU AND AMAZON LINUX SERVERS ###############################
+
+# # # METHOD # 1 AMAZON LINUX SERVER - TO MAKE A CHANGE AND RESTART THE SERVICE USING HNDLERS.
+# #     # On Amazon Linux - an admin email address change - A config change demonstration by using 'fileinline' module
+# #     - name: change email address for the admin in the configration
+# #       tags: apache,httpd,amazon
+# #       lineinfile: path=/etc/httpd/conf/httpd.conf regexp='^ServerAdmin' line="ServerAdmin demo-email@gmail.com"
+# #       when: ansible_distribution == "Amazon"
+# #       notify: restart httpd           # notify will let the handlers know
+
+# # # METHOD # 1 UBUNTU SERVER - TO MAKE A CHANGE AND RESTART THE SERVICE USING HNDLERS.
+# #     # On UBUNTU - an admin email address change - A config change demonstration by using 'fileinline' module
+# #     - name: change email address for the admin in the configration on Ubuntu Server
+# #       tags: apache,apache2,ubuntu
+# #       lineinfile: path=/etc/apache2/sites-available/000-default.conf search_string='ServerAdmin' line="\tServerAdmin demo-email@gmail.com"
+# #       when: ansible_distribution == "Ubuntu"
+# #       notify: restart apache2           # notify will let the handlers know
+
+# # # handlers will be indentation same like tasks
+# #   handlers:
+# #     - name: restart httpd
+# #       service: name=httpd state=restarted
+
+# #     - name: restart apache2
+# #       service: name=apache2 state=restarted      
+
+# # METHOD # 2 AMAZON LINUX SERVER - TO MAKE A CHANGE AND RESTART THE SERVICE USING REGISTER VARIABLE.
+#     # On Amazon Linux - an admin email address change - A config change demonstration by using 'fileinline' module
+#     - name: change email address for the admin in the configration on Amazon Linux Server
+#       tags: apache,httpd,amazon
+#       lineinfile: path=/etc/httpd/conf/httpd.conf regexp='^ServerAdmin' line="ServerAdmin azure12345.devops12345@gmail.com"
+#       when: ansible_distribution == "Amazon"
+#       register: httpd          # this variable name can be anything - we are registering the state into a variable called 'httpd'
+
+#       # IMPORTANT NOTE:- MAKE SURE THAT THE ABOVE VARIABLE 'httpd' SHOULD BE CHANGE OTHERWISE THE BELOW TASK WILL NOT RUN.
+#     - name: restart httpd service on Amazon Linux Server
+#       tags: apache,httpd,amazon
+#       service: name=httpd state=restarted
+#       when: httpd.changed         # if there is a change in the above variable 'httpd' then restart the service 
+
+
+# # METHOD # 2 UBUNTU SERVER - TO MAKE A CHANGE AND RESTART THE SERVICE USING REGISTER VARIABLE.
+#     # On UBUNTU server - an admin email address change - A config change demonstration by using 'fileinline' module
+#     - name: change email address for the admin in the configration on Ubuntu Server
+#       tags: apache,apache2,ubuntu
+#       lineinfile: path=/etc/apache2/sites-available/000-default.conf search_string='ServerAdmin' line="\tServerAdmin azure12345.devops12345@gmail.com"
+#       when: ansible_distribution == "Ubuntu"
+#       register: apache2          # this variable name can be anything - we are registering the state into a variable called 'apache2'
+
+#       # IMPORTANT NOTE:- MAKE SURE THAT THE ABOVE VARIABLE 'apache2' SHOULD BE CHANGE OTHERWISE THE BELOW TASK WILL NOT RUN.
+#     - name: restart apache2 service on Ubuntu Server
+#       tags: apache,apache2,ubuntu
+#       service: name=apache2 state=restarted
+#       when: apache2.changed         # if there is a change in the above variable 'apache2' then restart the service 
+
+
+# ################################### COPYING CONTENTS (A SINGLE FILE AND A DIRECTORY TO ALL SERVERS )#####################################
+
+#     # copy contents - tip -> remote_src=yes if the contents directory exists remotely not locally.
+#     - name: copy the source contents to the all webserver
+#       tags: apache,apache2,httpd
+#       # ###### copy only a file - Due to root owner and group property its good for security purpose because only root can make changes to this file. mode=0644 are the permissions on this file when it get to the destination server.
+#       copy: src=default_site.html dest=/var/www/html/index.html owner=root group=root mode=0644
+#       ###### copy a directory
+#       # copy: src=demo/app/ dest=/var/www/html owner=root group=root owner=root group=root mode=0755
+
+# #######################################################################################################################################################################################################################################
+
+# # Targeting Specific Servers: db_servers - you can verify after login to the database servers.
+#   # Check if its installed:   'mariadb --version'
+#   # Check if its running and enable: 'systemctl status mariadb'
+# - hosts: db_servers
+#   become: true
+#   tasks:
+#     - name: install mariadb package (Amazon)
+#       tags: db,mariadb105-server,amazon
+#       dnf: name=mariadb105-server state=latest
+#       when: ansible_distribution == "Amazon"
+
+#     - name: install mariadb package (Ubuntu)
+#       tags: db,mariadb-server,ubuntu
+#       apt: name=mariadb-server state=latest
+#       when: ansible_distribution == "Ubuntu"
+
+#     - name: Ensure mariadb Started on Ubuntu Server
+#       tags: apache,apache2,ubuntu
+#       service: name=mariadb state=started enabled=yes
+#       when: ansible_distribution == "Ubuntu"
+
+#     - name: Ensure mariadb Started on Amazon Linux Server
+#       tags: apache,httpd,amazon
+#       service: name=mariadb state=started enabled=yes
+#       when: ansible_distribution == "Amazon"
+
+# ######################################################################################################################################################
+
+# # Targeting Specific Servers: file_servers - Note 'samba' package name is same for Ubunu, CentOS and Amazon Servers so we used generic package manager.
+# - hosts: file_servers
+#   become: true
+#   tasks:
+#     - name: install samba package
+#       tags: samba
+#       package: name=samba state=latest
+
+#     - name: Ensure samba Started on (Ubuntu Server)
+#       tags: apache,apache2,ubuntu
+#       service: name=smbd state=started enabled=yes          # smbd is the service name in on Ubuntu Server
+#       when: ansible_distribution == "Ubuntu"
+
+#     - name: Ensure samba Started on (Amazon Linux Server)
+#       tags: apache,httpd,amazon
+#       service: name=smb state=started enabled=yes           # smb is the service name in on Amazon Linux Server
+#       when: ansible_distribution == "Amazon"
+
+# #################################  RUN: ansible-playbook playbooks/04-site-files.yml --tags terraform --ask-become-pass   ####################################
+# - hosts: control_host
+#   become: true
+#   tasks:
+
+#     # install tools on our control host
+#     - name: install tools on control host
+#       tags: always
+#       package: name={{item}} state=latest 
+#       with_items:
+#         - curl
+#         - unzip
+
+#     # install terraform on our control host - download a zip file from internet and extract it locally on our control host.
+#     - name: install terraform on control host
+#       tags: terraform,control,control_host
+#       unarchive: src=https://releases.hashicorp.com/terraform/1.7.5/terraform_1.7.5_linux_amd64.zip dest=/usr/local/bin owner=root group=root remote_src=yes mode=0755
+#       # google the 'terraform download' and copy the above link
+
+# # Commands to verify to our control host. 
+# # /usr/local/bin/terraform
+# # terraform

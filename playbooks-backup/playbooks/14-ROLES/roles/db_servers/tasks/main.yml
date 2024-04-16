@@ -1,0 +1,19 @@
+- name: install mariadb package (Amazon)
+  tags: db,mariadb105-server,amazon
+  dnf: name=mariadb105-server state=latest
+  when: ansible_distribution == "Amazon"
+
+- name: install mariadb package (Ubuntu)
+  tags: db,mariadb-server,ubuntu
+  apt: name=mariadb-server state=latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: Ensure mariadb Started on Ubuntu Server
+  tags: apache,apache2,ubuntu
+  service: name=mariadb state=started enabled=yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Ensure mariadb Started on Amazon Linux Server
+  tags: apache,httpd,amazon
+  service: name=mariadb state=started enabled=yes
+  when: ansible_distribution == "Amazon"
