@@ -3,15 +3,24 @@
 - hosts: all
   become: true        # sudo permissions
   pre_tasks:          # These tasks will be run before anything else in the playbook.
-    - name: install updates (Amazon Linux)
+    - name: updates repo cache (Amazon Linux)
       tags: always
-      dnf: update_cache=yes update_only=yes
+      dnf: update_cache=yes
+      changed_when: false         # NOT A CHANGE NO MATTER WHAT - (WE WILL NOT SEE changed=1 IN THE PLAY RECAP)
       when: ansible_distribution == "Amazon"
 
-    - name: install updates (Ubuntu)
+    - name: updates repo cache (Ubuntu)
       tags: always
-      apt: update_cache=yes upgrade=dist
+      apt: update_cache=yes
+      changed_when: false         # NOT A CHANGE NO MATTER WHAT - - (WE WILL NOT SEE changed=1 IN THE PLAY RECAP)
       when: ansible_distribution == "Ubuntu"
+
+
+    # THIS IS FOR LATER USE IF WE WANT SSH KEY MANAGEMENT LATER ON - ITS JUST A PLACE HOLDER
+    # Copy the ssh public key to all the servers
+    - name: Copy the ssh public key to all the servers
+      tags: always
+      authorized_key: user=simone key="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIItAUg8LGKHv+4WKZvCJ/ko4viI0g7l7aFIfWw3UR3Fy ansible"
 
 #######################################################################################################################################################################
 
@@ -176,7 +185,7 @@
       tags: always
       package: name={{item}} state=latest 
       with_items:
-        # - curl    # curl is package name only on ubuntu or debian
+        - curl
         - unzip
 
     # install terraform on our control host - download a zip file from internet and extract it locally on our control host.

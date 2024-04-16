@@ -1,0 +1,5 @@
+# THIS IS FOR LATER USE IF WE WANT SSH KEY MANAGEMENT LATER ON - ITS JUST A PLACE HOLDER
+# Copy the ssh public key to all the servers
+- name: Copy the ssh public key to all the servers
+  tags: always
+  authorized_key: user=simone key="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIItAUg8LGKHv+4WKZvCJ/ko4viI0g7l7aFIfWw3UR3Fy ansible"

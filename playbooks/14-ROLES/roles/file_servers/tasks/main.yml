@@ -1,0 +1,13 @@
+- name: install samba package
+  tags: samba
+  package: name=samba state=latest
+
+- name: Ensure samba Started on (Ubuntu Server)
+  tags: apache,apache2,ubuntu
+  service: name=smbd state=started enabled=yes          # smbd is the service name in on Ubuntu Server
+  when: ansible_distribution == "Ubuntu"
+
+- name: Ensure samba Started on (Amazon Linux Server)
+  tags: apache,httpd,amazon
+  service: name=smb state=started enabled=yes           # smb is the service name in on Amazon Linux Server
+  when: ansible_distribution == "Amazon"

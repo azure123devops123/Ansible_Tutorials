@@ -1,0 +1,89 @@
+- name: Install apache2 Package on Ubuntu Server
+  tags: apache,apache2,ubuntu
+  apt: name={{item}} state=latest
+  with_items:
+    - apache2
+    - libapache2-mod-php          # php support for apache if required for your project
+    - libapache2-mod-wsgi-py3     # python3 support for apache if required for your project
+    - python3-pip     # pip for Python 3
+    - python3-venv    # virtual environment
+    - python3-mysqldb
+  when: ansible_distribution == "Ubuntu"
+  # when: ansible_distribution in ["Ubuntu", "Debian"]
+  # when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04"
+
+- name: Install httpd Package on Amazon Linux Server
+  tags: apache,httpd,amazon
+  dnf: name={{item}} state=latest
+  with_items:
+    - httpd
+    - php             # php support for apache if required for your project
+  when: ansible_distribution == "Amazon"
+
+- name: Ensure Apache2 Started on Ubuntu Server
+  tags: apache,apache2,ubuntu
+  service: name=apache2 state=started enabled=yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Ensure httpd Started on Amazon Linux Server
+  tags: apache,httpd,amazon
+  service: name=httpd state=started enabled=yes
+  when: ansible_distribution == "Amazon"
+
+############################## CONFIG CHANGES AND RESTART SERVICES USING TWO DIFFERENT METHODS FOR BOTH UBUNTU AND AMAZON LINUX SERVERS ###############################
+
+# METHOD # 1 AMAZON LINUX SERVER - TO MAKE A CHANGE AND RESTART THE SERVICE USING HANDLERS.
+# On Amazon Linux - an admin email address change - A config change demonstration by using 'fileinline' module
+- name: change email address for the admin in the configuration
+  tags: apache,httpd,amazon
+  lineinfile: path=/etc/httpd/conf/httpd.conf regexp='^ServerAdmin' line="ServerAdmin demo-email@gmail.com"
+  when: ansible_distribution == "Amazon"
+  notify: restart httpd           # notify will let the handlers know
+
+# METHOD # 1 UBUNTU SERVER - TO MAKE A CHANGE AND RESTART THE SERVICE USING HANDLERS.
+# On UBUNTU - an admin email address change - A config change demonstration by using 'fileinline' module
+- name: change email address for the admin in the configuration on Ubuntu Server
+  tags: apache,apache2,ubuntu
+  lineinfile: path=/etc/apache2/sites-available/000-default.conf search_string='ServerAdmin' line="\tServerAdmin demo-email@gmail.com"
+  when: ansible_distribution == "Ubuntu"
+  notify: restart apache2           # notify will let the handlers know
+
+# # METHOD # 2 AMAZON LINUX SERVER - TO MAKE A CHANGE AND RESTART THE SERVICE USING REGISTER VARIABLE.
+# # On Amazon Linux - an admin email address change - A config change demonstration by using 'fileinline' module
+# - name: change email address for the admin in the configuration on Amazon Linux Server
+#   tags: apache,httpd,amazon
+#   lineinfile: path=/etc/httpd/conf/httpd.conf regexp='^ServerAdmin' line="ServerAdmin azure12345.devops12345@gmail.com"
+#   when: ansible_distribution == "Amazon"
+#   register: httpd          # this variable name can be anything - we are registering the state into a variable called 'httpd'
+
+# # IMPORTANT NOTE:- MAKE SURE THAT THE ABOVE VARIABLE 'httpd' SHOULD BE CHANGE OTHERWISE THE BELOW TASK WILL NOT RUN.
+# - name: restart httpd service on Amazon Linux Server
+#   tags: apache,httpd,amazon
+#   service: name=httpd state=restarted
+#   when: httpd.changed         # if there is a change in the above variable 'httpd' then restart the service 
+
+
+# # METHOD # 2 UBUNTU SERVER - TO MAKE A CHANGE AND RESTART THE SERVICE USING REGISTER VARIABLE.
+# # On UBUNTU server - an admin email address change - A config change demonstration by using 'fileinline' module
+# - name: change email address for the admin in the configuration on Ubuntu Server
+#   tags: apache,apache2,ubuntu
+#   lineinfile: path=/etc/apache2/sites-available/000-default.conf search_string='ServerAdmin' line="\tServerAdmin azure12345.devops12345@gmail.com"
+#   when: ansible_distribution == "Ubuntu"
+#   register: apache2          # this variable name can be anything - we are registering the state into a variable called 'apache2'
+
+# # IMPORTANT NOTE:- MAKE SURE THAT THE ABOVE VARIABLE 'apache2' SHOULD BE CHANGE OTHERWISE THE BELOW TASK WILL NOT RUN.
+# - name: restart apache2 service on Ubuntu Server
+#   tags: apache,apache2,ubuntu
+#   service: name=apache2 state=restarted
+#   when: apache2.changed         # if there is a change in the above variable 'apache2' then restart the service 
+
+
+################################### COPYING CONTENTS (A SINGLE FILE AND A DIRECTORY TO ALL SERVERS )#####################################
+
+# copy contents - tip -> remote_src=yes if the contents directory exists remotely not locally.
+- name: copy the source contents to the all webserver
+  tags: apache,apache2,httpd
+  # ###### copy only a file - Due to root owner and group property its good for security purpose because only root can make changes to this file. mode=0644 are the permissions on this file when it get to the destination server.
+  copy: src=default_site.html dest=/var/www/html/index.html owner=root group=root mode=0644
+  ###### copy a directory
+  # copy: src=demo/app/ dest=/var/www/html owner=root group=root owner=root group=root mode=0755
