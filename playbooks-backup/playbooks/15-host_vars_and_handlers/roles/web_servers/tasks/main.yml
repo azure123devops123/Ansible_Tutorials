@@ -1,34 +1,13 @@
-- name: Install apache2 Package on Ubuntu Server
-  tags: apache,apache2,ubuntu
-  apt: name={{item}} state=latest
+- name: Install apache and php Packages
+  tags: apache,httpd,php
+  package: name={{item}} state=latest
   with_items:
     - "{{ apache_package_name }}"
     - "{{ php_package_name }}"          # php support for apache if required for your project
-    - libapache2-mod-wsgi-py3     # python3 support for apache if required for your project
-    - python3-pip     # pip for Python 3
-    - python3-venv    # virtual environment
-    - python3-mysqldb
-  when: ansible_distribution == "Ubuntu"
-  # when: ansible_distribution in ["Ubuntu", "Debian"]
-  # when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04"
 
-- name: Install httpd Package on Amazon Linux Server
-  tags: apache,httpd,amazon
-  dnf: name={{item}} state=latest
-  with_items:
-    - "{{ apache_package_name }}"
-    - "{{ php_package_name }}"             # php support for apache if required for your project
-  when: ansible_distribution == "Amazon"
-
-- name: Ensure Apache2 Started on Ubuntu Server
-  tags: apache,apache2,ubuntu
+- name: Ensure Apache Started and Enabled
+  tags: apache,httpd
   service: name="{{ apache_service_name }}" state=started enabled=yes
-  when: ansible_distribution == "Ubuntu"
-
-- name: Ensure httpd Started on Amazon Linux Server
-  tags: apache,httpd,amazon
-  service: name="{{ apache_service_name }}" state=started enabled=yes
-  when: ansible_distribution == "Amazon"
 
 ############################## CONFIG CHANGES AND RESTART SERVICES USING TWO DIFFERENT METHODS FOR BOTH UBUNTU AND AMAZON LINUX SERVERS ###############################
 
@@ -38,7 +17,7 @@
   tags: apache,httpd,amazon
   lineinfile: path=/etc/httpd/conf/httpd.conf regexp='^ServerAdmin' line="ServerAdmin demo-email123@gmail.com"
   when: ansible_distribution == "Amazon"
-  notify: restart httpd           # notify will let the handlers know
+  notify: restart {{ apache_service_name }}           # notify will let the handlers know
 
 # METHOD # 1 UBUNTU SERVER - TO MAKE A CHANGE AND RESTART THE SERVICE USING HANDLERS.
 # On UBUNTU - an admin email address change - A config change demonstration by using 'fileinline' module
@@ -46,7 +25,7 @@
   tags: apache,apache2,ubuntu
   lineinfile: path=/etc/apache2/sites-available/000-default.conf search_string='ServerAdmin' line="\tServerAdmin demo-email123@gmail.com"
   when: ansible_distribution == "Ubuntu"
-  notify: restart apache2           # notify will let the handlers know
+  notify: restart {{ apache_service_name }}          # notify will let the handlers know
 
 # # METHOD # 2 AMAZON LINUX SERVER - TO MAKE A CHANGE AND RESTART THE SERVICE USING REGISTER VARIABLE.
 # # On Amazon Linux - an admin email address change - A config change demonstration by using 'fileinline' module

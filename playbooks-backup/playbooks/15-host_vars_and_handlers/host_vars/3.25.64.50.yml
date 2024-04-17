@@ -1,0 +1,7 @@
+# Packages Names:
+apache_package_name: httpd
+php_package_name: php
+
+
+# Services Names:
+apache_service_name: httpd
