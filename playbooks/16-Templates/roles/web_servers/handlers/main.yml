@@ -1,0 +1,7 @@
+# handlers will be indentation same like tasks
+
+- name: restart httpd
+  service: name="{{ apache_service_name }}" state=restarted
+
+- name: restart apache2
+  service: name="{{ apache_service_name }}" state=restarted

@@ -1,0 +1,17 @@
+# install tools on our control host
+- name: install tools on control host
+  tags: always
+  package: name={{item}} state=latest 
+  with_items:
+    # - curl
+    - unzip
+
+# install terraform on our control host - download a zip file from internet and extract it locally on our control host.
+- name: install terraform on control host
+  tags: terraform,control,control_host
+  unarchive: src=https://releases.hashicorp.com/terraform/1.7.5/terraform_1.7.5_linux_amd64.zip dest=/usr/local/bin owner=root group=root remote_src=yes mode=0755
+  # google the 'terraform download' and copy the above link
+
+# Commands to verify to our control host. 
+# /usr/local/bin/terraform
+# terraform

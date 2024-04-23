@@ -1,0 +1,29 @@
+# Nginx Installation
+- name: Install nginx on all the servers
+  package: name=nginx state=latest update_cache=yes
+
+# Copy index.html on Amazon Server
+- name: copy index.html to  Amazon Server
+  copy: src=index.html dest=/usr/share/nginx/html/index.html owner=root group=root mode=0644
+  when: ansible_distribution == "Amazon"
+
+# Copy index.html on Ubuntu Server
+- name: copy index.html to Ubuntu Server
+  copy: src=index.html dest=/var/www/html/index.html owner=root group=root mode=0644
+  when: ansible_distribution == "Ubuntu"
+
+# Ensure nginx started and enabled on all servers
+- name: Ensure nginx started and enabled
+  service: name=nginx state=started enabled=yes
+
+# Copy updated.html on Amazon Server and notify handler to restart the service
+- name: copy updated.html to Amazon Server
+  copy: src=updated.html dest=/usr/share/nginx/html/index.html owner=root group=root mode=0644
+  when: ansible_distribution == "Amazon"
+  notify: nginx restarted
+
+# Copy updated.html on Ubuntu Server and notify handler to restart the service
+- name: copy updated.html to Ubuntu Server
+  copy: src=updated.html dest=/var/www/html/index.html owner=root group=root mode=0644
+  when: ansible_distribution == "Ubuntu"
+  notify: nginx restarted  

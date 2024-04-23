@@ -1,0 +1,12 @@
+# Packages Names:
+apache_package_name: apache2
+php_package_name: libapache2-mod-php
+
+
+# Services Names:
+apache_service_name: apache2
+ssh_service_name: sshd
+
+# Add ssh users and choose the relevant template file:
+ssh_users: "jay simone"
+ssh_template_file: sshd_config_ubuntu.j2

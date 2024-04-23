@@ -1,0 +1,4 @@
+# handlers will be indentation same like tasks
+
+- name: restart sshd
+  service: name="{{ ssh_service_name }}" state=restarted

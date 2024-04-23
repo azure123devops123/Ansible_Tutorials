@@ -1,0 +1,19 @@
+---
+
+- hosts: "*"                  # all
+  become: true
+  gather_facts: false         # fast execution of playbook
+  # remote_user: simone
+  tasks:
+    - name: Creates directory
+      file: path=./demo_directory state=directory       # "value of state must be one of: absent, directory, file, hard, link, touch, got
+       
+    - name: Creates file
+      # file: path=./hello.txt state=touch
+      file: path=./demo_directory/hello2.txt state=touch
+
+
+    - name: Uninstall pip3 (Python3 Package Manager) 
+      package: name=python3-pip state=present           # check on remote hosts: pip3 --version
+
+
