@@ -1,0 +1,42 @@
+---
+
+- hosts: all
+  become: true
+  vars: # ITS SCOPE WILL BE WHOLE PLAYBOOK LEVEL - WE CAN USE IT IN ANY TASK
+    playbook_level_variable: "playbook_level_value"
+
+  vars_files:
+    - ./my-vars.yml  
+
+  tasks:
+    - name: Playbook level variable
+      # debug: msg="Hello from ansible {{ playbook_level_variable }}"
+      debug: var=playbook_level_variable
+
+    - name: Task level variable
+      vars: # ITS SCOPE WILL BE ONLY TASK LEVEL - WE CAN ONLY USE IT WITHIN THE TASK WE DEFINE IT
+        task_level_variable: "task_level_value"
+      # debug: msg="Hello from ansible {{ task_level_variable }}"
+      debug: var=task_level_variable
+
+    - name: Variables from file
+      # debug: msg="Hello from ansible {{ variable_from_file }}"
+      debug: var=variable_from_file
+
+    - name: Variables at runtime # run your playbook by passing variables at the command line using the --extra-vars (or -e) argument
+      # debug: msg="Hello from ansible {{ variable_from_commandline }}"
+      debug: var=variable_from_commandline
+
+
+
+# Run playbook by passing runtine variables: (two ways)
+# ansible-playbook playbooks/003-variables/variables.yml --extra-vars '{"variable_from_commandline":"variable_value_from_commandline"}'
+# OR
+# ansible-playbook playbooks/003-variables/variables.yml -e '{"variable_from_commandline":"variable_value_from_commandline"}'
+
+
+
+# Run playbook by passing runtine variables file. We do not need to define vars_files: block of code in this case: (two ways)
+# ansible-playbook playbooks/003-variables/variables.yml --extra-vars "@playbooks/003-variables/my-vars.yml"
+# OR
+# ansible-playbook playbooks/003-variables/variables.yml -e "@playbooks/003-variables/my-vars.yml"

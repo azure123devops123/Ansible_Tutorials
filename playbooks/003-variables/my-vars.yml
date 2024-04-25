@@ -1,0 +1,3 @@
+---
+variable_from_file: "variable_value_from_file"
+precedence_variable: "file_value"

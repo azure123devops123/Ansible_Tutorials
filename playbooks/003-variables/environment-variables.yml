@@ -1,0 +1,24 @@
+---
+
+- hosts: all
+  become: true
+  environment:
+    CUSTOM_ENVIRONMENT_VARIABLE_PLAYBOOK_LEVEL: "PLAYBOOK LEVEL VALUE"
+
+  tasks:
+    - name: Playbook level environment variable
+      command: "echo $CUSTOM_ENVIRONMENT_VARIABLE_PLAYBOOK_LEVEL"    # THESE BOTH COMMANDS WILL GIVE SIMILAR OUTPUT
+      # shell: "echo $CUSTOM_ENVIRONMENT_VARIABLE_PLAYBOOK_LEVEL"
+
+    - name: Task level environment variable
+      environment:
+        CUSTOM_ENVIRONMENT_VARIABLE_TASK_LEVEL: "TASK LEVEL VALUE"
+      ansible.builtin.command: "echo $CUSTOM_ENVIRONMENT_VARIABLE_TASK_LEVEL" # ansible.builtin.command OR command is same
+      # ansible.builtin.command: "echo $CUSTOM_ENVIRONMENT_VARIABLE_PLAYBOOK_LEVEL and $CUSTOM_ENVIRONMENT_VARIABLE_TASK_LEVEL"
+      # shell: "echo $CUSTOM_ENVIRONMENT_VARIABLE_TASK_LEVEL"
+
+    # - name: Task level and Playbook level environment variable demo
+    #   ansible.builtin.command: "echo $CUSTOM_ENVIRONMENT_VARIABLE_PLAYBOOK_LEVEL and $CUSTOM_ENVIRONMENT_VARIABLE_TASK_LEVEL"
+
+# FOLLOWING COMMAND TO RUN THE PLAYBOOK: -v means verbose 
+# ansible-playbook playbooks/003-variables/environment-variables.yml -v

@@ -1,0 +1,62 @@
+---
+
+- hosts: all
+  become: true
+  vars:
+    # 1. String Variable
+    string_variable: "string variable value"
+
+    # 2. Boolean Variable
+    is_enabled: true # If it's false TASK [Boolean Variable] will be skipped
+
+    # 3. List Variable
+    fruits:
+      - apple
+      - orange
+      - banana
+    # OR 
+    # fruits: ['apple', 'orange', 'banana']
+
+    # 4. Dictionary Variable
+    prices:
+      apple: 0.5
+      orange: 1.0
+      banana: 1.5
+    # OR
+    # prices: {"apple": 0.5, "banana": 1.5, "orange": 1.0}
+
+
+  tasks: 
+    - name: String Variable
+      # debug: msg="This is - {{ string_variable }}"
+      debug: var=string_variable
+
+    - name: Boolean Variable
+      debug: msg="This is the boolean variable value"
+      when: is_enabled
+
+    - name: List Variable
+      # debug: msg="This is - {{ fruits }}"
+      debug: var=fruits
+
+    - name: List Variable - Reference individual item in the list
+      # debug: msg="This is - {{ fruits[0] }}"
+      debug: var=fruits[0]
+
+    - name: Dictionary Variable
+      debug: msg="This is - {{ prices }}"
+      # debug: var=prices
+
+    - name: Dictionary Variable - Reference individual item in the dictionary
+      # command: echo "Price of the apple is {{ prices['apple'] }}"
+      command: echo "Price of the apple is {{ prices.apple }}"
+
+    - name: Registering the value and then printing the registered vaiable
+      # command: echo "{{ prices['apple'] }}"
+      command: echo "Price of the apple is {{ prices.apple }}"
+      register: apple_price_as_registered_variable
+    - name: Print the value of registered vaiable 
+      debug: var=apple_price_as_registered_variable.stdout
+
+# FOLLOWING COMMAND TO RUN THE PLAYBOOK: -v means verbose 
+# ansible-playbook playbooks/004-yaml/yml-demo.yml -v     

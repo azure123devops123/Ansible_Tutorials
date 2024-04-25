@@ -1,0 +1,22 @@
+---
+# 1st Precedence: COMMAND LINE VARIABLES
+# 2nd Precedence: TASK VARIABLE
+# 3nd Precedence: FILE VARIABLES
+# 4rd Precedence: PLAYBOOK VARIABLES
+
+- hosts: all
+  become: true
+  vars:
+    precedence_variable: "playbook_value"
+  # vars_files:
+  #   - ./my-vars.yml  
+
+  tasks:
+    - name: precedence demo
+      # vars:
+      #   precedence_variable: "task_value"
+      debug: var=precedence_variable
+
+# FOLLOWING COMMANDS TO RUN THE PLAYBOOK:
+# ansible-playbook playbooks/003-variables/variable-precedence-demo.yml
+# ansible-playbook playbooks/003-variables/variable-precedence-demo.yml -e '{"precedence_variable":"commandline_value"}'
