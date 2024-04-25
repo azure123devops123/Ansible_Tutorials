@@ -1,0 +1,36 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+    - name: Loop Example - 3 Times execute on each server
+      debug: var=item
+      # debug: msg={{item}}
+      with_items:
+        - item1
+        - item2
+        - item3
+
+
+    - name: Loop Example - 3 Times execute on each server
+      debug: var=item
+      # debug: msg={{item}}
+      with_items:
+        - name: jabir
+          country: pakistan
+        - name: saleem
+          country: pakistan
+        - name: pam
+          country: australia
+
+
+    - name: Loop Example - 3 Times execute on each server
+      debug: var=item.name
+      # debug: msg={{item.country}}
+      with_items:
+        - name: jabir
+          country: pakistan
+        - name: saleem
+          country: pakistan
+        - name: trevor
+          country: australia

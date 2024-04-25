@@ -1,0 +1,38 @@
+---
+- hosts: all
+  become: true
+  tasks:      
+  
+  # Ansible facts is the meta data in a json formate about the server.
+  # This is the first task executes when we run the playbook.
+  # Adhoc command:    ansible all -m setup
+
+    - name: Architecture
+      # debug: msg="{{ ansible_architecture }}"
+      debug: var=ansible_architecture
+
+    - name: Kernel
+      # debug: msg="{{ ansible_kernel }}"
+      debug: var=ansible_kernel
+
+    - name: Distribution
+      # debug: msg="{{ ansible_distribution }}"
+      debug: var=ansible_distribution
+
+    - name: Hostname
+      # debug: msg="{{ ansible_hostname }}"
+      debug: var=ansible_hostname
+
+    - name: User ID
+      # debug: msg="{{ ansible_user_id }}"
+      debug: var=ansible_user_id
+
+    - name: Private IPv4 addresses
+      # debug: msg="{{ ansible_all_ipv4_addresses }}"
+      debug: var=ansible_all_ipv4_addresses
+
+# Shortcut Way:
+    - debug: var=groups             # all groups
+    - debug: var=group_names        # only group names
+    - debug: var=inventory_hostname # host Public IPv4 address
+    - debug: var=hostvars           # alot of infomation of the servers in a json formate - same like running Adhoc command:   ansible all -m setup

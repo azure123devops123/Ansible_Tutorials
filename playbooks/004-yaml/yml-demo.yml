@@ -1,7 +1,8 @@
 ---
-
 - hosts: all
   become: true
+  gather_facts: false
+
   vars:
     # 1. String Variable
     string_variable: "string variable value"
@@ -25,6 +26,18 @@
     # OR
     # prices: {"apple": 0.5, "banana": 1.5, "orange": 1.0}
 
+    # 5. Resfering Nested Elements insdie Dictionary - (BELOW THERE ARE TWO ITEMS IN THIS DICTIONARY)
+    customer_fruit_basket:
+      - name: Jabir
+        fruits:
+          - apple
+          - orange
+          - banana
+      - name: saleem
+        fruits:
+          - graps
+          - kewi
+          - melon
 
   tasks: 
     - name: String Variable
@@ -51,12 +64,24 @@
       # command: echo "Price of the apple is {{ prices['apple'] }}"
       command: echo "Price of the apple is {{ prices.apple }}"
 
-    - name: Registering the value and then printing the registered vaiable
+    - name: Registering the value and then printing the registered vaiable      # TASK 1
       # command: echo "{{ prices['apple'] }}"
-      command: echo "Price of the apple is {{ prices.apple }}"
+      # command: echo "Price of the apple is {{ prices.apple }}"
+      shell: echo "Price of the apple is {{ prices.apple }}"
       register: apple_price_as_registered_variable
-    - name: Print the value of registered vaiable 
+    - name: Print the value of registered vaiable      # TASK 2
       debug: var=apple_price_as_registered_variable.stdout
 
-# FOLLOWING COMMAND TO RUN THE PLAYBOOK: -v means verbose 
-# ansible-playbook playbooks/004-yaml/yml-demo.yml -v     
+    - name: Fetch apple from Jabir's basket and then fetch the price of the apple from prices dictionary.
+      debug: msg="Fetch fruit {{customer_fruit_basket[0].fruits[0]}} from Jabir's basket and then fetch the price {{ prices[customer_fruit_basket[0].fruits[0]] }} of the apple from prices dictionary."
+      # debug: var=prices[customer_fruit_basket[0].fruits[0]]
+
+    # 6. Jinja 2 filters on Dictionary's Keys - Convert the dictionary keys into the list and then change them into the upper cases
+    - name: Using Jinja 2 filters on Dictionary's Keys
+      debug: msg="{{ prices.keys() | list | map('upper') }}"               # This | pipe is a jinja 2 filter
+      # debug:
+      #   var: prices.keys() | list | map('upper')
+
+
+# FOLLOWING COMMAND TO RUN THE PLAYBOOK: -v means verbose
+# ansible-playbook playbooks/004-yaml/yml-demo.yml -v

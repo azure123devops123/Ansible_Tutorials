@@ -1,0 +1,40 @@
+---
+- hosts: all
+  become: true
+  vars:
+    check: true
+
+  tasks:
+    - name: Multiple Conditionals for Ubuntu distribution 
+      debug: msg="{{ ansible_distribution }} is awesome"
+      when: ansible_distribution == "Ubuntu" and ansible_os_family == "Debian"
+      # ansible_distribution in ["Ubuntu", "Amazon"]
+      # ansible_distribution == "Ubuntu" or ansible_os_family == "Amazon"
+   
+    # Conditional depends on ansible facts
+    - name: Conditional for Amazon distribution 
+      debug: msg="{{ ansible_distribution }} is awesome"
+      when: ansible_distribution == 'Amazon'
+
+
+    # Conditional depends on boolean variable
+    - name: Conditional depends on boolean variable
+      debug: msg="This task will only run when the value of check will be {{ check }}"
+      when: check
+
+
+    # Register a variable and evaluates the value using when condition - TWO TASKS
+    - name: Register a variable
+      # shell: uname
+      command: uname
+      register: uname_results
+    - name: Use the variable in conditional statement
+      debug: msg="{{ uname_results.stdout }}"
+      when: uname_results.stdout.find('Linux') != -1
+
+
+   # Conditional with a loop
+    - name: Print the items greater then 6
+      command: echo {{ item }}
+      loop: [0, 2, 4, 6, 8, 10, 12, 14, 16]
+      when: item > 6
