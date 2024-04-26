@@ -1,0 +1,47 @@
+---
+
+- hosts: all
+  become: true
+  vars:
+    server_port: 9090      # Make sure this port should be open on all the servers
+  tasks: 
+
+ # Amazon Server:
+
+    # Apache Installation on Amazon Server
+    - name: Install Apache on Amazon Server
+      dnf: name=httpd state=latest update_cache=yes
+      when: ansible_distribution == "Amazon"
+
+    # Genrate Custom Configration File
+    - name: Genrate Custom Configration File
+      # vars:
+      #   server_port: 9090
+      template: src=custom_config_file_for_amazon.j2 dest=/etc/httpd/conf/httpd.conf owner=root group=root mode=0644
+      when: ansible_distribution == "Amazon"
+      notify: restart httpd   # Handler will only fire when server_port value will be chnage.
+      
+
+# Ubuntu Server:
+
+    # Apache Installation on Ubuntu Server
+    - name: Install apache on Ubuntu Server
+      apt: name=apache2 state=latest update_cache=yes
+      when: ansible_distribution == "Ubuntu"
+
+    # Genrate Custom Configration File
+    - name: Genrate Custom Configration File
+      template: src=custom_config_file_for_ubuntu.j2 dest=/etc/apache2/ports.conf owner=root group=root mode=0644
+      when: ansible_distribution == "Ubuntu"
+      notify: restart apache2   # Handler will only fire when server_port value will be chnage.
+
+
+  handlers:
+
+    # Ensure Apache Restarted on Amazon Linux Server
+    - name: restart httpd
+      service: name=httpd state=restarted enabled=yes
+
+    # Ensure Apache Restarted on Amazon Ubuntu Server
+    - name: restart apache2
+      service: name=apache2 state=restarted enabled=yes
