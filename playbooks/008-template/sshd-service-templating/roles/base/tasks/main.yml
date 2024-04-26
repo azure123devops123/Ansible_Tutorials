@@ -1,0 +1,14 @@
+# Amazon Server:
+# Generate Custom Configuration File
+- name: Generate Custom Configuration File
+  template: src=custom_sshd_config_file_for_amazon.j2 dest=/etc/ssh/sshd_config owner=root group=root mode=0644
+  when: ansible_distribution == "Amazon"
+  notify: restart sshd  # Handler will only fire when ssh_users value will be change.
+      
+
+# Ubuntu Server:
+# Generate Custom Configuration File
+- name: Generate Custom Configuration File
+  template: src=custom_sshd_config_file_for_ubuntu.j2 dest=/etc/ssh/sshd_config owner=root group=root mode=0644
+  when: ansible_distribution == "Ubuntu"
+  notify: restart sshd   # Handler will only fire when ssh_users value will be change.
