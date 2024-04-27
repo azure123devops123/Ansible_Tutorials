@@ -1,0 +1,33 @@
+---
+- hosts: web_servers
+  become: true    # sudo permissions
+  tasks:          # here we have multiple tasks in this playbook
+
+# 1. ignore_errors - Ignoring the error
+    # Here demo.html does not exists on our server but still the playbook execution will be completed while ignoring this task
+    - name: copy demo.html which does not exists 
+      copy: src=demo.html dest=/var/www/html
+      register: copy_result
+      ignore_errors: true   # it will ignore the errors
+
+    # JUST PRINTING THE copy_result VARIABLE VALUE
+    - name: register variable 
+      debug: var=copy_result
+
+# 2. any_errors_fatal
+    # Here demo.html does not exists on our server and due to that this playbook execution will NOT be completed
+    - name: copy demo.html with failed_when
+      template: src=demo.html dest=/var/www/html
+      failed_when:    # HERE WE DEFINED THE CONDITIONS
+        - '"Could not find or access" not in copy_result.msg'
+        - copy_result.failed == true
+      # any_errors_fatal: true    # IF THE ABOVE BOTH CONDITIONS ARE TRUE (MET) THEN FAIL THE PLAYBOOK
+      any_errors_fatal: false    # WE SET THIS VALUE TO false so we can execute the bottom task 'Create a file if it does not exist'
+
+
+# WE CAN SEE THAT IF SOMETHING HAS CHANGED ON THE REMOTE SERVER BY USING changed_when
+    - name: Create a file if it does not exist
+      command: touch /var/www/html
+      register: file_created
+      changed_when: file_created.rc == 0 # IF RESULT CODE IS 0 THAT MEANS THIS FILE IS SUCCESSFULLY CREATED
+      
