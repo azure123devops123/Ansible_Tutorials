@@ -1,0 +1,36 @@
+---
+- hosts: all
+  become: true    # sudo permissions
+  tasks:          # here we have multiple tasks in this playbook
+
+# Install Apache Web Server:
+    - name: Install apache2 Package on Ubuntu Server
+      apt: name={{item}} state=latest update_cache=yes
+      with_items:
+        - apache2
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Install httpd Package on Amazon Linux Server
+      dnf: name={{item}} state=latest update_cache=yes
+      with_items:
+        - httpd
+      when: ansible_distribution == "Amazon"
+
+
+# Production Release:
+    # Copy production-release-1.0.html on Both Amazon and Ubuntu Servers - Same Path
+    - name: copy production-release-1.0.html to  Amazon Server
+      copy: src=production-release-1.0.html dest=/var/www/html/index.html owner=root group=root mode=0644
+
+
+# Restart Apache Web Server:
+    - name: Ensure Apache2 Restarted on Ubuntu Server
+      service: name=apache2 state=restarted enabled=yes
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Ensure httpd Restarted on Amazon Linux Server
+      service: name=httpd state=restarted enabled=yes
+      when: ansible_distribution == "Amazon"
+
+# FOLLOWING COMMAND TO RUN THE PLAYBOOK:
+# ansible-playbook playbooks/009-deployment-strategies/single-server-deployment.yml

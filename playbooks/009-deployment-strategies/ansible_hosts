@@ -1,0 +1,16 @@
+# # Single Server Deployment Strategy
+# [default]
+# 54.252.136.213
+
+# Multi Server Deployment Strategy - Blue Green Deployment Strategy
+[blue]
+# Remote Server 1
+52.62.205.106
+# Remote Server 2
+54.252.136.213
+
+[green]
+# Remote Server 3
+3.107.48.34
+# Remote Server 4
+3.104.223.184
