@@ -1,0 +1,13 @@
+---
+
+- hosts: web_servers
+  gather_facts: false
+  tasks:
+    - name: Show vault variable value
+      debug: var=my_secret
+
+
+
+
+
+  # ansible-playbook playbooks/011-vault/my_vault_show.yml -e @playbooks/011-vault/my_vault.yml --ask-vault-pass
