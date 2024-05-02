@@ -1,9 +1,15 @@
 {
     "ansible.python.interpreterPath": "/usr/bin/python3",
     "cSpell.words": [
+        "Corretto",
+        "devel",
+        "dhcpv",
         "fileinline",
+        "firewalld",
         "groupofgroups",
         "lineinfile",
+        "posix",
+        "venv",
         "webserver"
     ]
 }

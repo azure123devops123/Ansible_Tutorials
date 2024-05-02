@@ -1,12 +1,27 @@
 # 0 - Youtube link: https://www.youtube.com/watch?v=C5mazUJ1dsg
 
 
+# Recommended to create an virtual environment and then install ansible inside that virtual envelopment:
+python3 -m venv venv                              # INSTALL VIRTUAL ENVIRONMENT
+source venv/bin/activate                          # ACTIVATE VIRTUAL ENVIRONMENT: Prompt will changed: (venv) jay@ubuntu:~$
+(venv) jay@ubuntu:~$ pip install pip --upgrade    # UPGRADE PIP TO A NEW VERSION
+(venv) jay@ubuntu:~$ pip install ansible          # INSTALL ANSIBLE INSIDE VIRTUAL ENVIRONMENT
+(venv) jay@ubuntu:~$ ansible --version            # VERIFY ANSIBLE INSTALLATION
+(venv) jay@ubuntu:~$ ls                           # LIST EXISTING VIRTUAL ENVIRONMENTS
+(venv) jay@ubuntu:~$ deactivate                   # DEACTIVATE VIRTUAL ENVIRONMENT
+sudo rm -rf venv                                  # DELETE THE VENV DIRECTORIES FROM YOUR SYSTEM
+
 # 1 - MUST INSTALL:
 python3 --version
 pip3 --version 
 pip show boto3                  # we need pip to install boto3 aws sdk.    inst pip instal boto3
 ansible --version
 
+# Create a public repository on github:
+gh repo create demoooooo --public
+
+# TO SEE OPEN PORTS IN LINUX:
+sudo lsof -i -P -n | grep LISTEN
 
 # 2 - WHY DYNAMIC INVENTORY SOLUTION: EC2 instances's ip addresses always keep changes due to AUTOSCALING.
 https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_ec2_inventory.html

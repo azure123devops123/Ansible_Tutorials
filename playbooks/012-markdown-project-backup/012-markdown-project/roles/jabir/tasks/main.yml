@@ -1,0 +1,170 @@
+####################################################################################################
+
+# - name: Current Working Directory
+#   shell: pwd
+#   register: path
+# - debug: msg="{{ path.stdout }}"
+
+# - name: Current User
+#   shell: whoami
+#   register: user
+# - debug: msg="{{ user.stdout }}"
+
+# - name: Host Name
+#   shell: hostname
+#   register: hostname_result
+# - debug: msg="{{ hostname_result.stdout }}"
+
+
+####################################################################################################
+
+# # FIVE GIT TASKS:
+# - name: Git Current Version
+#   shell: git --version
+#   register: current_version
+# - debug: msg="{{ current_version.stdout }}"  # git version 2.42.0
+
+# - name: Install New Git Version
+#   # shell: brew install git
+#   package: name={{item}} state=present
+#   with_items:
+#     - git
+
+# - name: Git New Version
+#   shell: git --version
+#   register: new_version
+# - debug: msg="{{ new_version.stdout }}"    # git version 2.44.0
+
+####################################################################################################
+
+# # FIVE DOCKER TASKS:
+# - name: DOCKER Current Version
+#   shell: docker --version
+#   register: current_version
+# - debug: msg="{{ current_version.stdout }}"  # Docker version 25.0.3, build 4debf41
+
+# - name: Install New DOCKER Version
+#   # shell: brew install docker
+#   package: name={{item}} state=present
+#   with_items:
+#     - docker
+
+# - name: DOCKER New Version
+#   shell: docker --version
+#   register: new_version
+# - debug: msg="{{ new_version.stdout }}"    # Docker version 26.1.0, build 9714adc6c7
+
+####################################################################################################
+
+# # FIVE ANSIBLE TASKS:
+# - name: ANSIBLE Current Version
+#   shell: ansible --version
+#   register: current_version
+# - debug: msg="{{ current_version.stdout }}"  # ansible [core 2.16.4]
+
+# - name: Install New ANSIBLE Version
+#   # shell: brew install ansible
+#   package: name={{item}} state=present
+#   with_items:
+#     - ansible
+
+# - name: ANSIBLE New Version
+#   shell: ansible --version
+#   register: new_version
+# - debug: msg="{{ new_version.stdout }}"    # ansible [core 2.16.4]
+
+# ####################################################################################################
+
+# # FIVE TERRAFORM TASKS:
+# - name: TERRAFORM Current Version
+#   shell: terraform --version
+#   register: current_version
+# - debug: msg="{{ current_version.stdout }}"  # Terraform v1.5.5
+
+# - name: Install New TERRAFORM Version
+#   # shell: brew install terraform
+#   package: name={{item}} state=present
+#   with_items:
+#     - terraform
+
+# - name: TERRAFORM New Version
+#   shell: terraform --version
+#   register: new_version
+# - debug: msg="{{ new_version.stdout }}"    # Terraform v1.5.5
+
+#####################################################################################################
+
+# # # FIVE Kubernetes TASKS: DOES NOT WORK
+# # - name: Kubernetes Current Version
+# #   shell: kubectl version --short # kubectl version --output=yaml
+# #   register: current_version
+# # - debug: msg="{{ current_version.stdout }}"  # clientVersion: major: "1" minor: "27"
+
+# - name: Install New Kubernetes Version
+#   # shell: brew install kubectl
+#   package: name={{item}} state=present
+#   with_items:
+#     - kubectl
+
+# # - name: Kubernetes New Version DOES NOT WORK
+# #   shell: kubectl version --output=yaml
+# #   register: new_version
+# # - debug: msg="{{ new_version.stdout }}"    # clientVersion: major: "1" minor: "27"
+
+#####################################################################################################
+
+
+######### INSTALL TOOLS ON MACOS (LOCAL SYSTEM), UBUNTU AND AMAZON LINUX (REMOTE SERVERS) #########
+
+# Install Tools on MACOS (LOCAL SYSTEM):
+- name: Install Tools on MacOS
+  # connection: local
+  # become_user: muhammadjabir
+  package: name={{item}} state=latest
+  with_items:
+    - git
+    - ansible
+    - kubectl
+    - terraform
+    - curl
+    - python3
+    # - docker
+  when: ansible_distribution == "MacOSX"
+
+# Install Tools on UBUNTU (REMOTE SERVER):
+- name: Install tools on Ubuntu Server
+  package: name={{item}} state=latest
+  with_items:
+    - git
+    - ansible
+    - docker.io
+    - curl
+    - python3
+    # - terraform
+    # - kubectl
+  when: ansible_distribution == "Ubuntu"
+
+# Install Tools on AMAZON LINUX (REMOTE SERVER):
+- name: Install tools on Amazon Linux Server
+  package: name={{item}} state=latest
+  with_items:
+    - git
+    - ansible
+    - docker
+    - python3
+    # - curl
+    # - terraform
+    # - kubectl
+  when: ansible_distribution == "Amazon"
+
+
+# 2.  IMPORTANT - VERSION CHECKING COMMANDS
+      #  git --version
+      #  terraform --version
+      #  kubectl --version --output=yaml
+      #  ansible --version
+      #  docker --version
+      #  curl --version
+      #  python3 --version
+
+####################################################################################################
