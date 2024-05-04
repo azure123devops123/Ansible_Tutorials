@@ -130,6 +130,7 @@
 #     # - docker
 #   when: ansible_distribution == "MacOSX"
 
+
 # # Install Tools on UBUNTU (REMOTE SERVER):
 # - name: Install tools on Ubuntu Server
 #   package: name={{item}} state=latest
@@ -145,6 +146,7 @@
 #     # - kubectl     # (NOT WORKING)
 #   when: ansible_distribution == "Ubuntu"
 
+
 # # Install Tools on AMAZON LINUX (REMOTE SERVER):
 # - name: Install tools on Amazon Linux Server
 #   package: name={{item}} state=latest
@@ -153,30 +155,30 @@
 #     - ansible
 #     - docker
 #     - python3
-#     - java-1.8.0-amazon-corretto-devel    # Amazon Corretto 8 for Amazon Linux 2 and Amazon Linux 2023
 #     - firewalld                           # Verify Your Installation ( By default Active: inactive (dead) ) : systemctl status firewalld
 #     # - curl       # (NOT WORKING)
 #     # - terraform  # (NOT WORKING)
 #     # - kubectl    # (NOT WORKING)
 #   when: ansible_distribution == "Amazon"
 
+####################################################
 
-# Verify Installation of tools
-- name: Verify Installation of tools
-  # shell: git --version && docker --version && python3 --version && java --version && ansible --version
-  # loop: ["git --version","ansible --version","docker --version","python3 --version","java --version"]
-  command: var=item
-  with_items:
-    - echo "git --version"
-    - echo "ansible --version"
-    - echo "docker --version"
-    - echo "python3 --version"
-    - echo "java --version"
-    # - curl       # (NOT WORKING)
-    # - terraform  # (NOT WORKING)
-    # - kubectl    # (NOT WORKING)
-#   register: tools_versions_result
-# - debug: var=tools_versions_result.stdout_lines
+# # Verify Installation of tools
+# - name: Verify Installation of tools
+#   # shell: git --version && docker --version && python3 --version && java --version && ansible --version
+#   # loop: ["git --version","ansible --version","docker --version","python3 --version","java --version"]
+#   command: var=item
+#   with_items:
+#     - echo "git --version"
+#     - echo "ansible --version"
+#     - echo "docker --version"
+#     - echo "python3 --version"
+#     - echo "java --version"
+#     # - curl       # (NOT WORKING)
+#     # - terraform  # (NOT WORKING)
+#     # - kubectl    # (NOT WORKING)
+# #   register: tools_versions_result
+# # - debug: var=tools_versions_result.stdout_lines
 
 
 # 2.  IMPORTANT - VERSION CHECKING COMMANDS

@@ -1,0 +1,79 @@
+# Install Jenkins on Amazon Server:
+
+- name: Install Jenkins Pre-requisite - JAVA 17 (Amazon Linux)
+  package: name={{item}} state=latest
+  with_items:
+    - fontconfig
+    - java-17-amazon-corretto   # Java 17
+  when: ansible_distribution == "Amazon"
+
+- name: Download Jenkins Repository (Amazon Linux)
+  get_url: url=https://pkg.jenkins.io/redhat-stable/jenkins.repo dest=/etc/yum.repos.d/jenkins.repo
+  when: ansible_distribution == "Amazon"
+  
+- name: Import Jenkins Key (Amazon Linux)
+  rpm_key: key=https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key state=present
+  when: ansible_distribution == "Amazon"
+
+- name: Install updates (Amazon Linux) after downloading jenkins repo
+  tags: always
+  dnf: update_cache=yes update_only=yes
+  when: ansible_distribution == "Amazon"
+
+- name: Install jenkins package (Amazon Linux)
+  package: name={{item}} state=latest
+  with_items:
+    - jenkins
+  when: ansible_distribution == "Amazon"
+
+- name: Ensure Jenkins is enabled and running (Amazon Linux)
+  service: name=jenkins state=started enabled=yes
+  when: ansible_distribution == "Amazon"
+
+
+
+# Install Jenkins on Ubuntu Server:
+
+- name: Install Jenkins Pre-requisite -  JAVA RUNTIME (Ubuntu Linux)
+  package: name={{item}} state=latest
+  with_items:
+    - fontconfig
+    - openjdk-17-jre     # Java 17 Runtime
+  when: ansible_distribution == "Ubuntu"
+
+- name: Download Jenkins Key (Ubuntu Linux)
+  get_url: url=https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key dest=/usr/share/keyrings/jenkins-keyring.asc
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add Jenkins Repository (Ubuntu Linux)
+  apt_repository: repo="deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian binary/" filename=jenkins.list state=present
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install updates (Ubuntu Linux) after downloading jenkins repo
+  package: update_cache=yes upgrade=dist
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install jenkins package (Ubuntu Linux)
+  package: name={{item}} state=latest
+  with_items:
+    - jenkins
+  when: ansible_distribution == "Ubuntu"
+
+- name: Ensure Jenkins is enabled and running (Ubuntu Linux)
+  service: name=jenkins state=started enabled=yes
+  when: ansible_distribution == "Ubuntu"
+
+
+
+# Install Jenkins on (MacOSX Workstation):
+
+- name: Install jenkins package (MacOSX Workstation)
+  package: name={{item}} state=latest
+  with_items:
+    - jenkins-lts
+  when: ansible_distribution == "MacOSX"
+
+- name: Ensure Jenkins is enabled and running (MacOSX Workstation)
+  shell: brew services restart jenkins-lts
+  changed_when: false
+  when: ansible_distribution == "MacOSX"

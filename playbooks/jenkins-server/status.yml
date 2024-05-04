@@ -1,0 +1,14 @@
+---
+
+- name: Jenkins Server Status on Ubuntu and Amazon (Remote Servers)
+  hosts: all
+  become: true
+  roles:
+    - jenkins_status
+
+- name: Jenkins Server Status on MacOS (Workstation)
+  hosts: localhost
+  connection: local
+  # become_user: muhammadjabir
+  roles:
+    - jenkins_status

@@ -1,0 +1,24 @@
+---
+
+- name: Jenkins Server Installation on Ubuntu and Amazon (Remote Servers)
+  hosts: all
+  become: true        # sudo permissions
+  pre_tasks:          # These tasks will be run before anything else in the playbook.
+    - name: install updates (Amazon Linux)
+      tags: always
+      package: update_cache=yes update_only=yes
+      when: ansible_distribution == "Amazon"
+
+    - name: install updates (Ubuntu)
+      tags: always
+      package: update_cache=yes upgrade=dist
+      when: ansible_distribution == "Ubuntu"
+  roles:
+    - jenkins
+
+- name: Jenkins Server Installation on MacOS (Workstation)
+  hosts: localhost
+  connection: local
+  # become_user: muhammadjabir
+  roles:
+    - jenkins
