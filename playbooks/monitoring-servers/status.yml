@@ -1,0 +1,12 @@
+- name: Grafana Server Status on Ubuntu and Amazon (Remote Servers)
+  hosts: all
+  become: true
+  roles:
+    - grafana_status
+
+# - name: Grafana Server Status on MacOS (Workstation)
+#   hosts: localhost
+#   connection: local
+#   # become_user: muhammadjabir
+#   roles:
+#     - jenkins_status
