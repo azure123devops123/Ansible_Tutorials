@@ -4,9 +4,9 @@
   roles:
     - grafana_status
 
-# - name: Grafana Server Status on MacOS (Workstation)
-#   hosts: localhost
-#   connection: local
-#   # become_user: muhammadjabir
-#   roles:
-#     - jenkins_status
+- name: Grafana Server Status on MacOS (Workstation)
+  hosts: localhost
+  connection: local
+  # become_user: muhammadjabir
+  roles:
+    - grafana_status

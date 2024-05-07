@@ -7,25 +7,30 @@
     - software-properties-common
   when: ansible_distribution == "Ubuntu"
 
+
 - name: Create a keyrings directory if it does not exist (Ubuntu Linux)
   file: path=/etc/apt/keyrings/ state=directory mode=0755
   when: ansible_distribution == "Ubuntu"
 
+
 - name: Download and Convert Grafana GPG key into BINARY and then Import it (Ubuntu Linux)
   # get_url: url=https://apt.grafana.com/gpg.key dest=/usr/share/keyrings/grafana.gpg
-  #  ABOVE MODULE COMMAND DOES NOT WORK PROPERLY BECAUSE 'gpg --dearmor' IS VERY IMPORTANT WHICH CONVERT THE KEY (.key) INTO BINARY (.gpg) - OTHERWISE IT WILL NOT WORK
+  #  ABOVE MODULE COMMAND DOES NOT WORK PROPERLY BECAUSE 'gpg --dearmor' IS VERY IMPORTANT WHICH CONVERT THE KEY INTO BINARY - OTHERWISE IT WILL NOT WORK
   shell: "wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null"
   changed_when: false
   when: ansible_distribution == "Ubuntu"
 
+
 - name: Add Grafana repository for stable releases (Ubuntu Linux)
   apt_repository: repo="deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" filename=grafana state=present
   when: ansible_distribution == "Ubuntu"
-# we can verify it on the remote server: 'cd /etc/apt/sources.list.d'  and then 'ls' and you will see 'grafana.list'   
+# we can verify it on the remote server: 'cd /etc/apt/sources.list.d'  and then 'ls' and you will see 'grafana.list'
+
 
 - name: Install update the list of available packages (Ubuntu Linux)
   ansible.builtin.apt: update_cache=yes upgrade=dist
   when: ansible_distribution == "Ubuntu"
+
 
 - name: Install Grafana package (Ubuntu Linux)
   ansible.builtin.apt: name={{item}} state=latest
@@ -33,54 +38,62 @@
     - grafana
   when: ansible_distribution == "Ubuntu"
 
+
 - name: Ensure Grafana is enabled and running (Ubuntu Linux)
   service: name=grafana-server state=started enabled=yes
   when: ansible_distribution == "Ubuntu"
 
 
-# Install Jenkins on Amazon Server
 
-# - name: Install  Pre-requisite - JAVA 17 (Amazon Linux)
-#   package: name={{item}} state=latest
-#   with_items:
-#     - fontconfig
-#     - java-17-amazon-corretto   # Java 17
-#   when: ansible_distribution == "Amazon"
-
-# - name: Download Jenkins Repository (Amazon Linux)
-#   get_url: url=https://pkg.jenkins.io/redhat-stable/jenkins.repo dest=/etc/yum.repos.d/jenkins.repo
-#   when: ansible_distribution == "Amazon"
-  
-# - name: Import Jenkins Key (Amazon Linux)
-#   rpm_key: key=https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key state=present
-#   when: ansible_distribution == "Amazon"
-
-# - name: Install updates (Amazon Linux) after downloading jenkins repo
-#   tags: always
-#   dnf: update_cache=yes update_only=yes
-#   when: ansible_distribution == "Amazon"
-
-# - name: Install jenkins package (Amazon Linux)
-#   package: name={{item}} state=latest
-#   with_items:
-#     - jenkins
-#   when: ansible_distribution == "Amazon"
-
-# - name: Ensure Jenkins is enabled and running (Amazon Linux)
-#   service: name=jenkins state=started enabled=yes
-#   when: ansible_distribution == "Amazon"
+# Install Grafana on Amazon Linux Server:
 
 
+- name: Import a GRAFANA RPM GPG key from a url (Amazon Linux)
+  ansible.builtin.rpm_key: key=https://rpm.grafana.com/gpg.key state=present
+  when: ansible_distribution == "Amazon"
 
-# # Install Jenkins on (MacOSX Workstation):
 
-# - name: Install jenkins package (MacOSX Workstation)
-#   package: name={{item}} state=latest
-#   with_items:
-#     - jenkins-lts
-#   when: ansible_distribution == "MacOSX"
+- name: Add repository - Create /etc/yum.repos.d/grafana.repo (Amazon Linux)
+  ansible.builtin.yum_repository:
+    name: grafana
+    description:  grafana repository
+    baseurl: https://rpm.grafana.com
+    gpgkey: https://rpm.grafana.com/gpg.key
+    repo_gpgcheck: true
+    enabled: true
+    gpgcheck: true
+    sslverify: true
+    sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+  when: ansible_distribution == "Amazon"
 
-# - name: Ensure Jenkins is enabled and running (MacOSX Workstation)
-#   shell: brew services restart jenkins-lts
-#   changed_when: false
-#   when: ansible_distribution == "MacOSX"
+
+- name: Install update the list of available packages (Amazon Linux)
+  tags: always
+  ansible.builtin.yum: update_cache=yes update_only=yes
+  when: ansible_distribution == "Amazon"
+
+
+- name: Install Grafana package (Amazon Linux)
+  ansible.builtin.yum: name={{item}} state=latest
+  with_items:
+    - grafana
+  when: ansible_distribution == "Amazon"
+
+
+- name: Ensure Grafana is enabled and running (Amazon Linux)
+  service: name=grafana-server state=started enabled=yes
+  when: ansible_distribution == "Amazon"
+
+
+# # Install Grafana on (MacOSX Workstation):
+
+- name: Install Grafana package (MacOSX Workstation)
+  package: name={{item}} state=latest
+  with_items:
+    - grafana
+  when: ansible_distribution == "MacOSX"
+
+- name: Ensure Grafana is enabled and running (MacOSX Workstation)
+  shell: brew services restart grafana
+  changed_when: false
+  when: ansible_distribution == "MacOSX"

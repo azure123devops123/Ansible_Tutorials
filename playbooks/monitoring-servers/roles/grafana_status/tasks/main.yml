@@ -3,32 +3,29 @@
 - name: Verify Grafana Services on (Amazon and Ubuntu)
   command: systemctl status grafana-server
   changed_when: false
-  when: ansible_distribution in ["Ubuntu"]
-  # when: ansible_distribution in ["Amazon","Ubuntu"]
+  when: ansible_distribution in ["Amazon","Ubuntu"]
 
 - name: Verify Grafana is listening on port 3000 on (Amazon and Ubuntu)
   wait_for: port=3000 timeout=8 delay=5
-  when: ansible_distribution in ["Ubuntu"]
-  # when: ansible_distribution in ["Amazon","Ubuntu"]
+  when: ansible_distribution in ["Amazon","Ubuntu"]
 
 - name: Check if Grafana is accessible on (Amazon and Ubuntu)
-  # uri: url=http://3.106.200.251:3000/login method=GET status_code=200
-  uri: url=http://3.106.200.251:3000/ method=GET status_code=200
-  when: ansible_distribution in ["Ubuntu"]
-  # when: ansible_distribution in ["Amazon","Ubuntu"]
+  # uri: url=http://127.0.0.1:3000/login method=GET status_code=200
+  uri: url=http://127.0.0.1:3000/ method=GET status_code=200
+  when: ansible_distribution in ["Amazon","Ubuntu"]
 
 
 # # MACOS STATUS:
 
-# - name: Verify Jenkins Service on (MacOSX Workstation)
-#   shell: brew services list | grep jenkins-lts
-#   changed_when: false
-#   when: ansible_distribution == "MacOSX"
+- name: Verify Grafana Service on (MacOSX Workstation)
+  shell: brew services list | grep grafana
+  changed_when: false
+  when: ansible_distribution == "MacOSX"
 
-# - name: Verify Jenkins is listening on port 8080 on (MacOSX Workstation)
-#   wait_for: port=8080 timeout=8 delay=5
-#   when: ansible_distribution == "MacOSX"
+- name: Verify Grafana is listening on port 8080 on (MacOSX Workstation)
+  wait_for: port=3000 timeout=8 delay=5
+  when: ansible_distribution == "MacOSX"
 
-# - name: Check if Jenkins is accessible (MacOSX Workstation)
-#   uri: url=http://127.0.0.1:8080/login?from=%2F method=GET status_code=200
-#   when: ansible_distribution == "MacOSX"
+- name: Check if Grafana is accessible (MacOSX Workstation)
+  uri: url=http://127.0.0.1:3000/ method=GET status_code=200
+  when: ansible_distribution == "MacOSX"
