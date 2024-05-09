@@ -1,0 +1,80 @@
+# Install Alertmanager on Ubuntu and Amazon Servers:
+
+# Creation of a Group
+- name: Creating alertmanager group (Remote Servers - Ubuntu and Amazon)
+  group: name={{ groupId }} state=present
+  when: ansible_distribution in ["Amazon","Ubuntu"]
+# Verify groups on remote servers:   tail /etc/group
+
+
+# Creation of a user and add to the group
+- name: Creating alertmanager user and add it to the above group  (Remote Servers - Ubuntu and Amazon)
+  user: name={{ userId }} state=present group={{  groupId }} system=yes comment="{{ userId }} nologin user" shell="/sbin/nologin" createhome=no
+  when: ansible_distribution in ["Amazon","Ubuntu"]
+# Verify this system user on remote servers:   sudo tail /etc/passwd     OR      id alertmanager
+
+
+# Download and extract alertmanager executable into the temp directory 
+- name: Download and extract alertmanager executable (Remote Servers - Ubuntu and Amazon)
+  unarchive: src={{ download_url_repository }} dest=/tmp/ remote_src=yes
+  when: ansible_distribution in ["Amazon","Ubuntu"]
+# Verify the contents on remote servers:   cd /tmp/    and check the contents of temp directory    ls      Noticed: alertmanager-0.27.0.linux-amd64
+
+
+# Copy the alertmanager executable into the bin directory
+- name: Copy the alertmanager executable into the bin directory (Remote Servers - Ubuntu and Amazon)
+  copy: src=/tmp/alertmanager-0.27.0.linux-amd64/alertmanager dest=/usr/local/bin/alertmanager owner={{ userId }} group={{ groupId }} mode=0755 remote_src=yes
+  when: ansible_distribution in ["Amazon","Ubuntu"]
+# Verify this alertmanager binaries on remote servers:   which alertmanager         Noticed: /usr/local/bin/alertmanager
+
+
+# Cleanup workspace by deleting the contents of /tmp/ directory
+- name: Cleanup workspace (Remote Servers - Ubuntu and Amazon)
+  file: name=/tmp/alertmanager-0.27.0.linux-amd64 state=absent
+  when: ansible_distribution in ["Amazon","Ubuntu"]
+# Verify the contents on remote servers:   cd /tmp/    and check the contents of temp directory    ls      Noticed: alertmanager-0.27.0.linux-amd64 is gone
+
+
+# Create two directories - one for data and one for alertmanager configuration
+- name: Create a data directory for alertmanager (Remote Servers - Ubuntu and Amazon)
+  file: name=/data/alertmanager/ state=directory group={{ groupId }} owner={{ userId }} mode=0755
+  when: ansible_distribution in ["Amazon","Ubuntu"]
+# Verify the directory creation on remote servers:   cd /data/alertmanager/
+
+
+- name: Create a config directory for alertmanager (Remote Servers - Ubuntu and Amazon)
+  file: name=/etc/alertmanager/ state=directory group={{ groupId }} owner={{ userId }} mode=0755
+  when: ansible_distribution in ["Amazon","Ubuntu"]
+# Verify the directory creation on remote servers:   cd /etc/alertmanager/
+
+
+- name: Create a custom config file (alertmanager.yml) into the alertmanager configuration directory (Remote Servers - Ubuntu and Amazon)
+  copy: src=alertmanager.yml dest=/etc/alertmanager/alertmanager.yml
+  when: ansible_distribution in ["Amazon","Ubuntu"]
+# Verify the /etc/alertmanager/ contents on remote servers:   cd /etc/alertmanager/      ls      Noticed: alertmanager.yml
+
+
+- name: Copy systemd init file (Remote Servers - Ubuntu and Amazon)
+  template: src=init.service.j2 dest=/etc/systemd/system/alertmanager.service
+  when: ansible_distribution in ["Amazon","Ubuntu"]
+  notify: systemd reload
+# Verify the status of the service:   systemctl status alertmanager.service   Noticed: Its Loaded but still inactive and dead.
+
+
+- name: Start alertmanager service (Remote Servers - Ubuntu and Amazon)
+  service: name={{ serviceName }} state=started enabled=yes
+  when: ansible_distribution in ["Amazon","Ubuntu"]
+# Verify the status of the service:   systemctl status alertmanager.service   Noticed: Its now enabled and active
+
+
+# Install Alertmanager on MacOSX (Workstation):
+
+
+
+
+
+
+
+
+
+

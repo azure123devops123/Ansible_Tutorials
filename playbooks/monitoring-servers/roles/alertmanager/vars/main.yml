@@ -1,0 +1,12 @@
+groupId: alertmanager
+
+userId: alertmanager
+
+# This is the version of the official repo which we can change when a new version releases. I just pass its value in the below variable.
+version: 0.27.0
+
+download_url_repository: https://github.com/prometheus/alertmanager/releases/download/v{{ version }}/alertmanager-{{ version }}.linux-amd64.tar.gz
+
+serviceName: alertmanager
+
+exec_command: "/usr/local/bin/alertmanager --config.file=/etc/alertmanager/alertmanager.yml --storage.path=/data/alertmanager"

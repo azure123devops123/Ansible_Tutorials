@@ -1,0 +1,40 @@
+##### This is the default configuration file just for backup.
+
+route:
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 1h
+  receiver: 'web.hook'
+receivers:
+  - name: 'web.hook'
+    webhook_configs:
+      - url: 'http://127.0.0.1:5001/'
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']
+
+
+# ###### This is the custom configuration file using slack notification when an instance is down #####/
+
+# global:
+#   slack_api_url: "https://hooks.slack.com/services/SlackWebhookAPI"
+
+# route:
+#   group_by: ['instance', 'severity']
+#   group_wait: 30s
+#   group_interval: 5m
+#   repeat_interval: 3h
+#   routes:
+#   - match:
+#       alertname: InstanceDown
+#   receiver: 'alert-team'
+
+# receivers:
+# - name: 'alert-team'
+#   slack_configs:
+#   - channel: "#webhook-test"
+#     text: "summary: {{ .CommonAnnotations.summary }}\ndescription: {{ .CommonAnnotations.description }}"

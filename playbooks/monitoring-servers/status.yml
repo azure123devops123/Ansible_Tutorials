@@ -3,6 +3,7 @@
   become: true
   roles:
     - grafana_status
+    - alertmanager_status
 
 - name: Grafana Server Status on MacOS (Workstation)
   hosts: localhost
@@ -10,3 +11,4 @@
   # become_user: muhammadjabir
   roles:
     - grafana_status
+    - alertmanager_status

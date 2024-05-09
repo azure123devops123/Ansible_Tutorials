@@ -15,6 +15,7 @@
       when: ansible_distribution == "Ubuntu"
   roles:
     - grafana
+    - alertmanager
 
 - name: Grafana Server Installation on MacOS (Workstation)
   hosts: localhost
@@ -22,3 +23,4 @@
   # become_user: muhammadjabir
   roles:
     - grafana
+    - alertmanager

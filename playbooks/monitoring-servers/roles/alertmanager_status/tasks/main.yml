@@ -1,0 +1,31 @@
+# AMAZON AND UBUNTU STATUS:
+
+- name: Verify Alertmanager Services on (Amazon and Ubuntu)
+  command: systemctl status alertmanager
+  changed_when: false
+  when: ansible_distribution in ["Amazon","Ubuntu"]
+
+- name: Verify Alertmanager is listening on port 9093 on (Amazon and Ubuntu)
+  wait_for: port=9093 timeout=8 delay=5
+  when: ansible_distribution in ["Amazon","Ubuntu"]
+
+- name: Check if Alertmanager is accessible on (Amazon and Ubuntu)
+  # uri: url=http://127.0.0.1:9093/login method=GET status_code=200
+  uri: url=http://127.0.0.1:9093/ method=GET status_code=200
+  when: ansible_distribution in ["Amazon","Ubuntu"]
+
+
+# # # MACOS STATUS:
+
+# - name: Verify Grafana Service on (MacOSX Workstation)
+#   shell: brew services list | grep grafana
+#   changed_when: false
+#   when: ansible_distribution == "MacOSX"
+
+# - name: Verify Grafana is listening on port 8080 on (MacOSX Workstation)
+#   wait_for: port=3000 timeout=8 delay=5
+#   when: ansible_distribution == "MacOSX"
+
+# - name: Check if Grafana is accessible (MacOSX Workstation)
+#   uri: url=http://127.0.0.1:3000/ method=GET status_code=200
+#   when: ansible_distribution == "MacOSX"

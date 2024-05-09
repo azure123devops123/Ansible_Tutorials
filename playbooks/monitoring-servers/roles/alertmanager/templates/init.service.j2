@@ -1,0 +1,17 @@
+[Unit]
+Description={{ serviceName }}
+Documentation= http://www.jabir.com.pk
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User={{ userId }}
+Group={{ groupId }}
+ExecStart={{ exec_command }}
+Restart=always
+RestartSec=2
+Type=simple
+StartLimitInterval=0
+
+[Install]
+WantedBy=multi-user.target
